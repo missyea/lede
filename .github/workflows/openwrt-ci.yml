@@ -12,6 +12,8 @@ on:
     - cron: 0 03 * * *
   release:
     types: [published]
+  watch:
+    types: started
 
 jobs:
 
