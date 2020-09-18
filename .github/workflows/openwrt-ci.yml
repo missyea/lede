@@ -41,21 +41,81 @@ jobs:
           sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf swig
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
-
+          
           df -h
 
       - name: Update feeds
         run: |
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          sed -i 's/src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
       - name: Generate configuration file
-        run: make defconfig
+        run: |
+          rm -f ./.config*
+          touch ./.config
+          
+          cat >> .config <<EOF
+          CONFIG_TARGET_x86=y
+          CONFIG_TARGET_x86_64=y
+          CONFIG_TARGET_x86_64_DEVICE_generic=y
+          # CONFIG_BUSYBOX_DEFAULT_FEATURE_IPV6 is not set
+          # CONFIG_GRUB_IMAGES is not set
+          # CONFIG_IPV6 is not set
+          # CONFIG_KERNEL_IPV6 is not set
+          # CONFIG_PACKAGE_UnblockNeteaseMusic is not set
+          # CONFIG_PACKAGE_UnblockNeteaseMusicGo is not set
+          # CONFIG_PACKAGE_dnsmasq_full_dhcp is not set
+          # CONFIG_PACKAGE_etherwake is not set
+          # CONFIG_PACKAGE_kmod-nf-conntrack-netlink is not set
+          # CONFIG_PACKAGE_kmod-nf-ipt6 is not set
+          # CONFIG_PACKAGE_kmod-tun is not set
+          # CONFIG_PACKAGE_libatomic is not set
+          # CONFIG_PACKAGE_libcares is not set
+          # CONFIG_PACKAGE_libhttp-parser is not set
+          # CONFIG_PACKAGE_libip6tc is not set
+          # CONFIG_PACKAGE_libminiupnpc is not set
+          # CONFIG_PACKAGE_libnatpmp is not set
+          # CONFIG_PACKAGE_libnghttp2 is not set
+          # CONFIG_PACKAGE_libuv is not set
+          # CONFIG_PACKAGE_luci-app-arpbind is not set
+          # CONFIG_PACKAGE_luci-app-autoreboot is not set
+          # CONFIG_PACKAGE_luci-app-ddns is not set
+          # CONFIG_PACKAGE_luci-app-nlbwmon is not set
+          CONFIG_PACKAGE_luci-app-openvpn=y
+          # CONFIG_PACKAGE_luci-app-ramfree is not set
+          # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server is not set
+          # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin is not set
+          # CONFIG_PACKAGE_luci-app-unblockmusic is not set
+          # CONFIG_PACKAGE_luci-app-upnp is not set
+          # CONFIG_PACKAGE_luci-app-vlmcsd is not set
+          # CONFIG_PACKAGE_luci-app-vsftpd is not set
+          # CONFIG_PACKAGE_luci-app-wol is not set
+          # CONFIG_PACKAGE_luci-app-xlnetacc is not set
+          # CONFIG_PACKAGE_luci-app-zerotier is not set
+          CONFIG_PACKAGE_luci-i18n-openvpn-zh-cn=y
+          CONFIG_PACKAGE_luci-theme-argon=y
+          CONFIG_PACKAGE_luci-theme-freifunk-generic=y
+          CONFIG_PACKAGE_luci-theme-material=y
+          CONFIG_PACKAGE_luci-theme-netgear=y
+          # CONFIG_PACKAGE_miniupnpd is not set
+          # CONFIG_PACKAGE_nlbwmon is not set
+          # CONFIG_PACKAGE_node is not set
+          # CONFIG_PACKAGE_shadowsocksr-libev-server is not set
+          # CONFIG_PACKAGE_v2ray-plugin is not set
+          # CONFIG_PACKAGE_vlmcsd is not set
+          # CONFIG_PACKAGE_vsftpd-alt is not set
+          # CONFIG_PACKAGE_wol is not set
+          # CONFIG_PACKAGE_zerotier is not set
+          # CONFIG_VMDK_IMAGES is not set
+          EOF
+          
+          sed -i 's/^[ \t]*//g' ./.config
+          make defconfig
 
       - name: Make download
         run: |
-          make download -j8
+          make download -j8 || make download -j1 V=s
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Compile firmware
