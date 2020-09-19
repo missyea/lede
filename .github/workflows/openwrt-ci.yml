@@ -15,18 +15,18 @@ on:
   watch:
     types: started
 
+env:
+  UPLOAD_BUILDINFO: false
+  UPLOAD_PACKAGE: false
+  UPLOAD_COWTRANSFER: true
+
 jobs:
-
   build_openwrt:
-
     name: Build OpenWrt firmware
-
     runs-on: ubuntu-latest
-
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -147,12 +147,14 @@ jobs:
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
 
       - name: Deliver buildinfo
+        if: env.UPLOAD_BUILDINFO == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: OpenWrt_buildinfo
           path: ./artifact/buildinfo/
 
       - name: Deliver package
+        if: env.UPLOAD_PACKAGE == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: OpenWrt_package
@@ -164,7 +166,6 @@ jobs:
           name: OpenWrt_firmware
           path: ./bin/targets/
   
-
       - name: Upload release asset
         if: github.event == 'release'
         uses: svenstaro/upload-release-action@v2
@@ -173,3 +174,10 @@ jobs:
           file: ./artifact/firmware/*
           tag: ${{ github.ref }}
           file_glob: true
+
+      - name: Upload firmware to cowtransfer
+        if: env.UPLOAD_COWTRANSFER == 'true'
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
+          echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
