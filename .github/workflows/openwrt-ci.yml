@@ -115,7 +115,7 @@ jobs:
           make defconfig
           
           sed -i "2i # network config" ./package/lean/default-settings/files/zzz-default-settings
-          sed -i "3i uci set network.lan.ipaddr='10.10.10.11'" ./package/lean/default-settings/files/zzz-default-settings
+          sed -i "3i uci set network.lan.ipaddr='10.10.10.21'" ./package/lean/default-settings/files/zzz-default-settings
           sed -i "4i uci set network.lan.gateway='10.10.10.10'" ./package/lean/default-settings/files/zzz-default-settings
           sed -i "5i uci commit network\n" ./package/lean/default-settings/files/zzz-default-settings
 
