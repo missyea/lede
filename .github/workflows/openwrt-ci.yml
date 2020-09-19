@@ -94,7 +94,7 @@ jobs:
           CONFIG_PACKAGE_ssocks=y
           CONFIG_PACKAGE_ssocksd=y
           CONFIG_PACKAGE_trojan-go=y
-          CONFIG_PACKAGE_trojan-plus=y
+          # CONFIG_PACKAGE_trojan-plus is not set
           CONFIG_PACKAGE_unzip=y
           # CONFIG_PACKAGE_v2ray-plugin is not set
           CONFIG_TROJAN_GO_COMPRESS_UPX=y
