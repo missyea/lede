@@ -62,6 +62,7 @@ jobs:
           CONFIG_TARGET_x86=y
           CONFIG_TARGET_x86_64=y
           CONFIG_TARGET_x86_64_DEVICE_generic=y
+          CONFIG_PACKAGE_luci-theme-netgear=y
           # CONFIG_GRUB_IMAGES is not set
           # CONFIG_PACKAGE_UnblockNeteaseMusic is not set
           # CONFIG_PACKAGE_UnblockNeteaseMusicGo is not set
