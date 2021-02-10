@@ -47,9 +47,8 @@ jobs:
 
       - name: Update feeds
         run: |
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >> ./feeds.conf.default
-          echo 'src-git small https://github.com/kenzok8/small' >> ./feeds.conf.default
+          echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >> ./feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
@@ -137,7 +136,7 @@ jobs:
           make defconfig
           
           sed -i "2i # network config" ./package/lean/default-settings/files/zzz-default-settings
-          sed -i "3i uci set network.lan.ipaddr='10.10.10.11'" ./package/lean/default-settings/files/zzz-default-settings
+          sed -i "3i uci set network.lan.ipaddr='10.10.10.21'" ./package/lean/default-settings/files/zzz-default-settings
           sed -i "4i uci set network.lan.gateway='10.10.10.10'" ./package/lean/default-settings/files/zzz-default-settings
           sed -i "5i uci commit network\n" ./package/lean/default-settings/files/zzz-default-settings
 
